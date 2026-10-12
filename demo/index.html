@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>麦麦奶龙 · 麦当劳 MCP 创意 Skill Demo</title>
+<style>
+/* ============================ 设计令牌（Design Tokens） ============================ */
+:root{
+  /* 品牌色 */
+  --red:#DB0007; --red-2:#B70004; --red-soft:#FDECEC; --red-line:#F3C4C4;
+  --yellow:#FFC72C; --yellow-soft:#FFF0CC; --yellow-line:#F0DCB4;
+  /* 中性色 */
+  --ink:#2B2118; --ink-2:#5A4E44; --muted:#8A7A6A;
+  --line:#EADFCB; --line-2:#DFD0B8;
+  --bg:#FBF7F0; --card:#FFFFFF; --soft:#FFF4E0; --soft-2:#FCFAF5;
+  /* 语义色 */
+  --green:#2E7D32; --green-soft:#EAF3DE; --green-line:#C0DD97;
+  /* 间距（4px 基准） */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+  /* 圆角 */
+  --r1:10px; --r2:14px; --r3:18px; --r4:22px; --r5:999px;
+  /* 弹性曲线（可爱回弹） */
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  /* 阴影 */
+  --sh1:0 1px 2px rgba(43,33,24,.06), 0 2px 8px rgba(43,33,24,.05);
+  --sh2:0 4px 14px rgba(43,33,24,.08), 0 12px 32px rgba(43,33,24,.07);
+  --sh3:0 10px 28px rgba(43,33,24,.16);
+  /* 字号 */
+  --fs-h1:26px; --fs-h2:17px; --fs-h3:14px; --fs-body:14px; --fs-sm:13px; --fs-xs:12px;
+  /* 页面内边距（与 .wrap 联动） */
+  --pad:20px;
+}
+
+/* ============================ 基础 ============================ */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  /* 奶油底 + 淡淡的奶龙波点，可爱但不吵 */
+  background-image:radial-gradient(#F3E7CC 1.1px, transparent 1.3px);
+  background-size:26px 26px;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:var(--fs-body);line-height:1.65;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+::selection{background:var(--yellow-soft);color:var(--ink)}
+h1{font-size:var(--fs-h1);font-weight:700;margin:0;letter-spacing:-.01em}
+h2{font-size:var(--fs-h2);font-weight:700;margin:0 0 var(--s3)}
+h3{font-size:var(--fs-h3);font-weight:700;margin:0 0 var(--s2)}
+p{margin:0 0 10px}
+button{font-family:inherit;font-size:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:4px}
+.sub{color:var(--muted);font-size:var(--fs-sm);margin:0 0 4px}
+.repo{color:var(--muted);font-size:var(--fs-xs);word-break:break-all}
+.wrap{max-width:1080px;margin:0 auto;padding:var(--s6) var(--pad) calc(80px + env(safe-area-inset-bottom))}
+
+/* ============================ 顶部品牌区 ============================ */
+.brand{display:flex;align-items:center;gap:var(--s3);padding-bottom:var(--s4);
+  border-bottom:3px solid var(--yellow);margin-bottom:var(--s4)}
+.logo{width:52px;height:52px;flex:none;border-radius:18px;background:var(--yellow-soft);
+  border:1px solid var(--yellow-line);display:grid;place-items:center;box-shadow:var(--sh1);
+  transition:transform .2s var(--spring)}
+.logo svg{animation:bob 3.2s ease-in-out infinite;transform-origin:50% 80%}
+.logo:hover{transform:rotate(-4deg) scale(1.06)}
+.logo:hover svg{animation:wiggle .5s ease}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3px) rotate(2deg)}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+.brand-txt{min-width:0}
+.brand-txt h1{color:var(--red)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .brand-txt h1{background:linear-gradient(115deg,var(--red) 15%,#F08300 55%,var(--yellow) 95%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+}
+.tagline{margin:2px 0 0;font-size:var(--fs-sm);color:var(--muted);
+  transition:opacity .3s, transform .3s}
+.tagline::before{content:"🍔 "}
+.tagline.swap{opacity:0;transform:translateY(4px)}
+.head-meta{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right}
+.badge-contest{display:inline-block;padding:5px 12px;border-radius:var(--r5);
+  background:linear-gradient(120deg,var(--red),var(--red-2));color:#fff;font-size:var(--fs-xs);
+  font-weight:700;letter-spacing:.02em;box-shadow:var(--sh1);
+  animation:badgeGlow 2.6s ease-in-out infinite}
+.badge-contest::before{content:"✨ "}
+@keyframes badgeGlow{0%,100%{box-shadow:var(--sh1)}50%{box-shadow:0 0 0 4px var(--red-soft),var(--sh2)}}
+.head-repo{font-size:var(--fs-xs);color:var(--muted);word-break:break-all}
+
+/* ============================ Tabs（含滑动指示条，移动端吸附） ============================ */
+.tabs{position:sticky;top:0;z-index:20;display:flex;gap:var(--s2);flex-wrap:wrap;
+  background:var(--bg);padding:var(--s2) 0 var(--s3);margin:0 calc(-1 * var(--pad)) var(--s4);padding-left:var(--pad);padding-right:var(--pad);
+  border-bottom:1px solid var(--line)}
+.tab{position:relative;padding:9px 18px;border-radius:var(--r5);border:1px solid var(--line);
+  background:#fff;color:var(--ink);font-size:var(--fs-body);min-height:40px;
+  transition:border-color .15s,color .15s,background .15s,transform .18s var(--spring),box-shadow .2s}
+.tab:hover{border-color:var(--yellow);transform:translateY(-2px);box-shadow:var(--sh1)}
+.tab:active{transform:scale(.95)}
+.tab.on{background:linear-gradient(120deg,var(--red),var(--red-2));border-color:var(--red);color:#fff;
+  font-weight:700;box-shadow:var(--sh1);animation:jello .45s var(--spring)}
+@keyframes jello{0%{transform:scale(.88)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+
+/* ============================ 面板与卡片 ============================ */
+.panel{display:none}
+.panel.on{display:block;animation:rise .32s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r3);
+  padding:var(--s5);margin-bottom:var(--s4);box-shadow:var(--sh1);
+  transition:box-shadow .22s,transform .22s}
+.card:hover{box-shadow:var(--sh2)}
+.grid{display:grid;gap:var(--s3)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+/* ============================ 表单控件 ============================ */
+label{display:block;font-size:var(--fs-xs);color:var(--muted);margin-bottom:6px}
+input[type=range]{width:100%;height:28px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:5px;background:#F1EAE0;border:1px solid var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;margin-top:-8px;
+  border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE27A,var(--yellow));
+  border:3px solid #fff;box-shadow:0 0 0 1.5px var(--yellow-line),var(--sh1);
+  transition:transform .15s var(--spring)}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-track{height:10px;border-radius:5px;background:#F1EAE0;border:1px solid var(--line)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#FFE27A,var(--yellow));
+  border:3px solid #fff;box-shadow:0 0 0 1.5px var(--yellow-line),var(--sh1)}
+input[type=number],input[type=text],select{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r1);
+  font-family:inherit;font-size:var(--fs-body);color:var(--ink);background:#fff;min-height:42px;
+  transition:border-color .15s, box-shadow .15s}
+select:hover,input:hover{border-color:var(--line-2)}
+select:focus,input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-soft);outline:none}
+input[type=file]{font-size:var(--fs-sm)}
+input[type=checkbox]{accent-color:var(--red)}
+
+/* ============================ 按钮 ============================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:11px 22px;min-height:42px;border-radius:var(--r2);
+  border:1px solid var(--red);background:linear-gradient(180deg,#E82A30,var(--red));color:#fff;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),var(--sh1);
+  transition:transform .18s var(--spring),box-shadow .2s,background .15s,border-color .15s}
+.btn:hover{background:linear-gradient(180deg,var(--red),var(--red-2));border-color:var(--red-2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),var(--sh2);transform:translateY(-2px)}
+.btn:active{transform:scale(.94)}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);font-weight:400;box-shadow:var(--sh1)}
+.btn.ghost:hover{border-color:var(--yellow);background:#FFFCF5;box-shadow:var(--sh2)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:var(--sh1)}
+.btn.sm{padding:7px 14px;min-height:34px;font-size:var(--fs-sm)}
+
+/* ============================ 小元件 ============================ */
+.chips{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.chip{padding:7px 15px;min-height:34px;border-radius:var(--r5);border:1px solid var(--line);
+  background:#fff;color:var(--ink);font-size:var(--fs-sm);
+  transition:border-color .15s,background .15s,transform .18s var(--spring),box-shadow .2s}
+.chip:hover{border-color:var(--yellow);transform:translateY(-2px);box-shadow:var(--sh1)}
+.chip:active{transform:scale(.94)}
+.chip.on{background:var(--yellow-soft);border-color:var(--yellow);font-weight:700;color:#8A5A12}
+.chip.ban{background:#FDEAEA;border-color:#F0B4B4;color:#A33;font-weight:700}
+.pill{display:inline-block;padding:5px 14px;border-radius:var(--r5);background:var(--yellow-soft);
+  border:1px solid var(--line);font-size:var(--fs-xs);color:#8A5A12}
+.pill.red{background:var(--red-soft);border-color:var(--red-line);color:#A33}
+.bar{height:10px;border-radius:5px;background:#F1EAE0;overflow:hidden}
+.bar > i{display:block;height:100%;width:0;transition:width .4s ease;
+  background-image:linear-gradient(90deg,var(--yellow),var(--red)),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.3) 0 8px,transparent 8px 16px);
+  background-size:auto,23px 100%;
+  animation:stripes .9s linear infinite}
+@keyframes stripes{to{background-position:0 0,23px 0}}
+.kbd{font-family:ui-monospace,Consolas,monospace;background:#F5F0E6;border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:var(--fs-xs)}
+
+/* ============================ 题目 / 方案 / 购物车 ============================ */
+.q{border:1px solid var(--line);border-radius:var(--r2);padding:14px 16px;margin-bottom:var(--s3);
+  background:#fff;box-shadow:var(--sh1);transition:box-shadow .2s,border-color .15s}
+.q:hover{box-shadow:var(--sh2)}
+.q .qt{font-weight:700;margin-bottom:10px;font-size:var(--fs-body);line-height:1.5}
+.q .tag{font-size:11px;padding:2px 9px;border-radius:var(--r5);background:var(--yellow-soft);color:#8A5A12;margin-right:8px;font-weight:700}
+.q .tag.d{background:var(--green-soft);color:#3B6D11}
+.opt{display:block;padding:10px 12px;min-height:42px;display:flex;align-items:center;
+  border:1px solid var(--line);border-radius:9px;margin-bottom:7px;font-size:var(--fs-sm);
+  transition:border-color .15s,background .15s,transform .12s}
+.opt:hover{border-color:var(--yellow);background:#FFFCF5}
+.opt:active{transform:scale(.99)}
+.opt.on{border-color:var(--red);background:#FFF4F4;font-weight:700;box-shadow:0 0 0 3px var(--red-soft)}
+.opt.on::after{content:"✓";margin-left:auto;color:var(--red);font-weight:700}
+
+.plan{border:1px solid var(--line);border-radius:var(--r2);padding:14px;background:#fff;
+  position:relative;box-shadow:var(--sh1);transition:box-shadow .2s,transform .2s,border-color .15s}
+.plan:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+.plan .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--s2);gap:var(--s2)}
+.plan .price{font-size:22px;font-weight:700;color:var(--red);white-space:nowrap;letter-spacing:-.01em}
+.plan ul{margin:0 0 8px;padding-left:0;list-style:none}
+.plan li{font-size:var(--fs-sm);padding:2px 0;display:flex;justify-content:space-between;gap:var(--s2)}
+.plan .kv{font-size:var(--fs-xs);color:var(--muted)}
+.plan.picked{border-color:var(--red);border-width:2px;background:#FFFBF9;box-shadow:0 0 0 3px var(--red-soft),var(--sh2)}
+
+.cart{display:flex;justify-content:space-between;align-items:center;padding:8px 0;
+  border-bottom:1px dashed var(--line);font-size:var(--fs-sm);gap:10px}
+.cart:last-child{border-bottom:0}
+.stepper{display:flex;align-items:center;gap:var(--s2)}
+.stepper button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);
+  background:#fff;line-height:1;font-size:16px;transition:border-color .15s,transform .12s}
+.stepper button:hover{border-color:var(--yellow)}
+.stepper button:active{transform:scale(.92)}
+.stepper b{min-width:16px;text-align:center}
+
+/* ============================ 指标 / 日志 / 画布 ============================ */
+.metric{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.metric div{background:var(--soft);border-radius:var(--r1);padding:10px 12px;
+  border:1px solid transparent;transition:transform .15s}
+.metric div:hover{transform:translateY(-1px)}
+.metric b{display:block;font-size:20px;font-weight:700;line-height:1.2;letter-spacing:-.01em}
+.metric span{font-size:var(--fs-xs);color:var(--muted)}
+.log{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:var(--soft-2);
+  border:1px dashed var(--line);border-radius:var(--r1);padding:12px;min-height:56px;white-space:pre-wrap;
+  color:#4A3E33;line-height:1.75}
+canvas{width:100%;height:auto;display:block;border-radius:var(--r2);border:1px solid var(--line);
+  background:#fff;box-shadow:var(--sh1)}
+.share{display:flex;gap:10px;flex-wrap:wrap;margin-top:var(--s3)}
+.tip{font-size:var(--fs-xs);color:var(--muted);margin-top:10px}
+.note{background:#FFFCF5;border-left:3px solid var(--yellow);padding:10px 14px;
+  border-radius:0 var(--r1) var(--r1) 0;font-size:12.5px;color:#6B5B4B;margin:12px 0}
+.note::before{content:"💡 "}
+
+/* ============================ 骨架屏 / 空状态 / Toast ============================ */
+.skel{position:relative;overflow:hidden;background:#F1EAE0;border-radius:var(--r1);min-height:16px}
+.skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:shimmer 1.3s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.empty{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+  padding:var(--s6) var(--s4);color:var(--muted)}
+.empty p{margin:0}
+.empty .empty-title{color:var(--ink-2);font-weight:700;font-size:var(--fs-body)}
+.toast-wrap{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);
+  display:flex;flex-direction:column;gap:8px;align-items:center;z-index:60;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;max-width:min(90vw,480px);
+  background:var(--ink);color:#FFF9F0;font-size:var(--fs-sm);
+  padding:10px 16px;border-radius:var(--r5);box-shadow:var(--sh3);
+  animation:toast-in .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.ok{background:#2B2118}
+.toast.good{background:#2E7D32}
+.toast.warn{background:#B70004}
+@keyframes toast-in{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+.toast.out{animation:toast-out .24s forwards}
+@keyframes toast-out{to{opacity:0;transform:translateY(8px)}}
+
+/* ============================ 名片就绪小彩带 ============================ */
+.pop{position:relative}
+.confetti{position:absolute;top:10px;left:50%;pointer-events:none;z-index:5}
+.confetti i{position:absolute;width:7px;height:7px;border-radius:2px;opacity:0;animation:burst .9s ease-out forwards}
+@keyframes burst{
+  0%{opacity:1;transform:translate(0,0) rotate(0)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}
+}
+
+/* ============================ Modal ============================ */
+.modal{position:fixed;inset:0;background:rgba(20,15,10,.55);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:70;overflow:auto;
+  animation:fade .2s ease}
+.modal.on{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal .box{background:#fff;border-radius:var(--r4);padding:22px;max-width:440px;width:100%;
+  max-height:86vh;overflow:auto;box-shadow:var(--sh3);animation:pop .3s var(--spring)}
+@keyframes pop{from{opacity:0;transform:scale(.88) translateY(10px)}to{opacity:1;transform:none}}
+
+/* ============================ 漂浮小食装饰 ============================ */
+.floaties{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.floaties span{position:absolute;bottom:-48px;left:var(--x);font-size:var(--fs,26px);
+  opacity:0;filter:saturate(.9);animation:floaty var(--t,22s) linear infinite;animation-delay:var(--d,0s)}
+@keyframes floaty{
+  0%{opacity:0;transform:translateY(0) rotate(-8deg)}
+  8%{opacity:.35}
+  85%{opacity:.3}
+  100%{opacity:0;transform:translateY(-108vh) rotate(12deg)}
+}
+@media (max-width:720px){.floaties{display:none}}
+
+/* ============================ 页脚 ============================ */
+footer{margin-top:var(--s8);padding-top:var(--s4);border-top:1px solid var(--line);
+  color:var(--muted);font-size:var(--fs-xs);text-align:center;line-height:1.8}
+
+/* ============================ 响应式 ============================ */
+@media (max-width:960px){
+  :root{--pad:16px}
+  .head-meta{align-items:flex-start;text-align:left}
+  .brand{flex-wrap:wrap}
+}
+@media (max-width:720px){
+  :root{--pad:12px;--fs-h1:19px}
+  .wrap{padding-top:var(--s4)}
+  h2{font-size:15px}
+  .card{padding:var(--s4);border-radius:var(--r2)}
+  .tab{padding:8px 13px;font-size:var(--fs-sm)}
+  .btn{padding:10px 16px}
+  .cart{flex-wrap:wrap;gap:6px}
+  .plan .hd{flex-wrap:wrap}
+  .plan .price{font-size:19px}
+  .metric{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .metric b{font-size:17px}
+  .log{font-size:11.5px}
+  .q .qt{font-size:var(--fs-sm)}
+}
+@media (max-width:400px){
+  .metric{grid-template-columns:1fr}
+  .stepper{width:100%;justify-content:space-between}
+  .brand-txt h1{font-size:18px}
+}
+
+/* 尊重系统「减少动态效果」偏好 */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="brand">
+  <div class="logo" aria-hidden="true">
+    <svg width="36" height="36" viewBox="0 0 34 34" role="img" aria-label="奶龙">
+      <ellipse cx="17" cy="19" rx="11" ry="12" fill="#FFD84D"/>
+      <ellipse cx="12" cy="15" rx="3" ry="3.4" fill="#FFFFFF"/>
+      <ellipse cx="22" cy="15" rx="3" ry="3.4" fill="#FFFFFF"/>
+      <circle cx="12.6" cy="16" r="1.4" fill="#2B2118"/>
+      <circle cx="22.6" cy="16" r="1.4" fill="#2B2118"/>
+      <ellipse cx="10" cy="20.5" rx="2.1" ry="1.3" fill="rgba(240,140,140,.55)"/>
+      <ellipse cx="24" cy="20.5" rx="2.1" ry="1.3" fill="rgba(240,140,140,.55)"/>
+      <path d="M13.5 24 Q17 27.5 20.5 24" stroke="#2B2118" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="brand-txt">
+    <h1>麦麦奶龙</h1>
+    <p class="tagline" id="tagline">今天吃什么堡？</p>
+  </div>
+  <div class="head-meta">
+    <span class="badge-contest">M-CODE 参赛作品</span>
+    <span class="head-repo" id="repoText">github.com/Perry233-TianYupeng/mcd-nailong</span>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="功能导航">
+  <button class="tab on" data-tab="coupon" role="tab" aria-selected="true">① 每日自动领券</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false">② 麦麦奶龙抽卡</button>
+  <button class="tab" data-tab="budget" role="tab" aria-selected="false">③ 穷鬼预算锁</button>
+</div>
+
+<!-- ============================= ① 领券 ============================= -->
+<div class="panel on" id="p-coupon" role="tabpanel">
+  <div class="card">
+    <h2>🎟️ 每日一键领券</h2>
+    <p class="sub">对应脚本 <span class="kbd">scripts/daily_coupons.py</span>。真实调用链：now-time-info → campaign-calendar → available-coupons → auto-bind-coupons → my-coupons。</p>
+    <div class="note">领完记得用——麦麦省的券躺过期就白给了。</div>
+    <div style="margin:14px 0 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn" id="btnCoupon">一键领取今日全部优惠券</button>
+      <label style="margin:0;display:flex;align-items:center;gap:6px"><input type="checkbox" id="dryRun" style="width:auto"> 试运行（不实际领取）</label>
+    </div>
+    <div class="bar" style="margin-bottom:14px"><i id="couponBar"></i></div>
+    <div class="log" id="couponLog">点击上方按钮开始。每日只跑一次（幂等），重复执行会提示。</div>
+  </div>
+
+  <div class="card" id="couponReport" style="display:none">
+    <h2>今日战报</h2>
+    <div class="metric" id="couponMetrics"></div>
+    <div class="grid g2" style="margin-top:16px">
+      <div>
+        <h3>领取明细</h3>
+        <div id="boundList"></div>
+      </div>
+      <div>
+        <h3>临期提醒</h3>
+        <div id="expireList"></div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <h3>近期活动预告</h3>
+      <div id="campaignList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= ② 抽卡 ============================= -->
+<div class="panel" id="p-quiz" role="tabpanel">
+  <div class="card" id="quizBox">
+    <h2>麦麦奶龙 · 汉堡抽卡</h2>
+    <p class="sub">10 道题（麦当劳 5 : 日常 5），或直接读历史订单。答完立刻出「堡格」与奶龙名片。</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px">
+      <button class="btn" id="btnQuizStart">开始答题</button>
+      <button class="btn ghost" id="btnQuizFast">不想答题，读我的历史订单</button>
+      <button class="btn ghost" id="btnQuizRandom">随机来一套（看看别人抽到啥）</button>
+    </div>
+    <div class="bar" id="quizBarWrap" style="display:none;margin-bottom:12px"><i id="quizBar"></i></div>
+    <div id="quizForm"></div>
+  </div>
+
+  <div class="card" id="quizResult" style="display:none">
+    <h2>你的奶龙名片</h2>
+    <div class="grid g2" style="align-items:start">
+      <div class="pop" id="quizCardWrap">
+        <canvas id="quizCanvas" width="1600" height="900"></canvas>
+        <div class="share">
+          <button class="btn" id="dlQuiz">下载 PNG</button>
+          <button class="btn ghost" id="shareQuiz">分享到微信 / QQ</button>
+          <button class="btn ghost" id="copyQuiz">复制文案</button>
+        </div>
+        <p class="tip">16:9 尺寸，微信、QQ、朋友圈、QQ 空间可直接发送。</p>
+      </div>
+      <div>
+        <h3>四轴画像</h3>
+        <div id="quizAxes" class="chips" style="margin-bottom:14px"></div>
+        <h3>性格关键词</h3>
+        <div id="quizPersonality" class="chips" style="margin-bottom:14px"></div>
+        <h3>堡格解读</h3>
+        <p id="quizBoge" class="sub"></p>
+        <h3>推荐套餐</h3>
+        <div id="quizCombo" style="margin-bottom:10px"></div>
+        <h3>底图</h3>
+        <p class="sub">默认用内置占位图。上传一张 16:9 奶龙梗图即可替换（主体建议放上方 2/3，底部会被信息面板覆盖）。</p>
+        <div class="chips" id="imgPresets" style="margin-bottom:10px"></div>
+        <input type="file" id="quizImg" accept="image/*">
+        <div style="margin-top:10px"><button class="btn ghost" id="btnQuizAgain">再抽一次</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= ③ 预算锁 ============================= -->
+<div class="panel" id="p-budget" role="tabpanel">
+  <div class="card">
+    <h2>穷鬼预算锁 —— “我只有 X 块，吃饱”</h2>
+    <p class="sub">在预算硬约束下枚举组合 → 本地试算 → 求 Pareto 前沿 → 给你 3 套最优解。真实 Skill 会再走一次 MCP <span class="kbd">calculate-price</span> 复核。</p>
+    <div class="grid g2" style="margin:16px 0">
+      <div>
+        <label>预算上限：<b id="budgetLabel" style="color:var(--red);font-size:15px">¥25</b></label>
+        <input type="range" id="budget" min="10" max="80" step="1" value="25" aria-label="预算上限">
+      </div>
+      <div>
+        <label>就餐方式</label>
+        <select id="mode">
+          <option value="dine_in">到店取餐</option>
+          <option value="take_out">外带</option>
+          <option value="delivery">麦乐送（+配送费，满 39 免）</option>
+        </select>
+      </div>
+    </div>
+    <label>口味偏好（可多选，再点一次变成“排除”）</label>
+    <div class="chips" id="tasteChips"></div>
+    <div style="margin:16px 0">
+      <label>门店</label>
+      <select id="store"></select>
+    </div>
+    <button class="btn" id="btnSolve">开始求解</button>
+  </div>
+
+  <div class="card" id="solveResult" style="display:none">
+    <h2>Pareto 最优 3 套方案</h2>
+    <p class="sub" id="solveMeta"></p>
+    <div class="grid g3" id="planList" style="margin-bottom:8px"></div>
+    <p class="tip">点方案即可载入下方购物车，然后自由增删改。</p>
+  </div>
+
+  <div class="card" id="cartBox" style="display:none">
+    <h2>🧾 我的订单</h2>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div id="cartList"></div>
+        <div style="margin-top:12px">
+          <label>加购一件</label>
+          <select id="addItem"></select>
+          <button class="btn ghost sm" id="btnAdd" style="margin-top:8px">加入购物车</button>
+        </div>
+      </div>
+      <div>
+        <div class="metric">
+          <div><span>🧮 原价</span><b id="mSub">¥0</b></div>
+          <div><span>🎉 优惠</span><b id="mDisc" style="color:#2E7D32">-¥0</b></div>
+          <div><span>🛵 配送费</span><b id="mDeliv">¥0</b></div>
+          <div><span>💰 实付</span><b id="mPay" style="color:var(--red)">¥0</b></div>
+        </div>
+        <div style="margin-top:12px" id="tierBox"></div>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="btnOrder">确认下单</button>
+          <button class="btn ghost" id="btnBudgetCard">生成本单奶龙名片</button>
+        </div>
+        <div class="log" id="orderLog" style="margin-top:12px">等待下单。</div>
+      </div>
+    </div>
+    <div style="margin-top:16px" class="pop" id="budgetCardWrap">
+      <canvas id="budgetCanvas" width="1600" height="900" style="display:none"></canvas>
+      <div class="share" id="budgetShare" style="display:none">
+        <button class="btn" id="dlBudget">下载 PNG</button>
+        <button class="btn ghost" id="shareBudget">分享到微信 / QQ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  本 Demo 为离线可跑版本（内置 mock 数据），真实调用请配置 <span class="kbd">MCD_MCP_TOKEN</span> 后使用 <span class="kbd">scripts/</span> 下的 CLI。<br>
+  所有价格、券、活动以麦当劳 MCP 实时查询为准；本项目不硬编码价格，且不会在未经确认的情况下下单。<br>
+  <span style="opacity:.75">奶龙已吃饱 🍔 · Made with 🐲 & ❤️</span>
+</footer>
+</div>
+
+<!-- 漂浮小食（纯装饰，移动端与 reduced-motion 自动关闭） -->
+<div class="floaties" aria-hidden="true">
+  <span style="--x:6%;--d:0s;--t:24s;--fs:26px">🍟</span>
+  <span style="--x:22%;--d:7s;--t:28s;--fs:22px">🍔</span>
+  <span style="--x:58%;--d:3s;--t:26s;--fs:24px">🍦</span>
+  <span style="--x:76%;--d:11s;--t:30s;--fs:28px">🍟</span>
+  <span style="--x:90%;--d:5s;--t:22s;--fs:20px">🥤</span>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="box">
+    <h2 id="modalTitle">分享</h2>
+    <p id="modalBody" class="sub"></p>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn" id="modalClose">知道了</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<script src="picture-manifest.js"></script>
+<script>
+/* ============================================================
+   0. 配置
+   ============================================================ */
+const REPO_URL = "github.com/Perry233-TianYupeng/mcd-nailong";
+document.getElementById("repoText").textContent = REPO_URL;
+
+/* ============================================================
+   1. 数据（与 scripts/mock_data.py 保持一致）
+   ============================================================ */
+const MENU = [
+  {code:"B001",name:"巨无霸",price:26.0,cat:"burger",tags:["牛","不辣","大份"],satiety:1.00,kcal:550,protein:25},
+  {code:"B002",name:"麦辣鸡腿堡",price:22.5,cat:"burger",tags:["鸡","辣","大份"],satiety:0.95,kcal:500,protein:23},
+  {code:"B003",name:"板烧鸡腿堡",price:23.5,cat:"burger",tags:["鸡","不辣","大份"],satiety:0.95,kcal:470,protein:24},
+  {code:"B004",name:"双层吉士汉堡",price:19.0,cat:"burger",tags:["牛","不辣","中份"],satiety:0.85,kcal:440,protein:22},
+  {code:"B005",name:"吉士汉堡",price:13.5,cat:"burger",tags:["牛","不辣","小份"],satiety:0.60,kcal:300,protein:15},
+  {code:"B006",name:"麦香鸡",price:12.5,cat:"burger",tags:["鸡","不辣","小份"],satiety:0.60,kcal:320,protein:14},
+  {code:"B007",name:"麦香鱼",price:14.5,cat:"burger",tags:["鱼","不辣","小份"],satiety:0.60,kcal:330,protein:15},
+  {code:"B008",name:"不素之霸",price:25.0,cat:"burger",tags:["牛","辣","大份"],satiety:1.05,kcal:610,protein:30},
+  {code:"B009",name:"麦辣鸡翅（2块）",price:13.0,cat:"side",tags:["鸡","辣","小份"],satiety:0.35,kcal:230,protein:12},
+  {code:"B010",name:"那么大鸡排",price:16.0,cat:"side",tags:["鸡","辣","中份"],satiety:0.50,kcal:300,protein:16},
+  {code:"S001",name:"中薯条",price:12.5,cat:"side",tags:["素","不辣","小份"],satiety:0.40,kcal:340,protein:4},
+  {code:"S002",name:"大薯条",price:15.0,cat:"side",tags:["素","不辣","中份"],satiety:0.50,kcal:420,protein:5},
+  {code:"S003",name:"麦乐鸡（5块）",price:13.0,cat:"side",tags:["鸡","不辣","小份"],satiety:0.40,kcal:250,protein:14},
+  {code:"S004",name:"玉米杯",price:9.5,cat:"side",tags:["素","不辣","小份"],satiety:0.25,kcal:120,protein:4},
+  {code:"S005",name:"苹果片",price:8.0,cat:"side",tags:["素","不辣","小份"],satiety:0.10,kcal:35,protein:0},
+  {code:"D001",name:"中杯可乐",price:9.5,cat:"drink",tags:["冷","素"],satiety:0.20,kcal:150,protein:0},
+  {code:"D002",name:"大杯可乐",price:11.0,cat:"drink",tags:["冷","素"],satiety:0.25,kcal:210,protein:0},
+  {code:"D003",name:"中杯雪碧",price:9.5,cat:"drink",tags:["冷","素"],satiety:0.20,kcal:140,protein:0},
+  {code:"D004",name:"热美式",price:12.0,cat:"drink",tags:["热","素"],satiety:0.05,kcal:5,protein:0},
+  {code:"D005",name:"热拿铁",price:16.0,cat:"drink",tags:["热","素","奶"],satiety:0.20,kcal:130,protein:7},
+  {code:"D006",name:"矿泉水",price:6.0,cat:"drink",tags:["素"],satiety:0.05,kcal:0,protein:0},
+  {code:"T001",name:"圆筒冰淇淋",price:6.0,cat:"dessert",tags:["冷","素","甜"],satiety:0.15,kcal:160,protein:3},
+  {code:"T002",name:"奥利奥麦旋风",price:12.5,cat:"dessert",tags:["冷","素","甜"],satiety:0.25,kcal:300,protein:5},
+  {code:"T003",name:"香芋派",price:8.5,cat:"dessert",tags:["热","素","甜"],satiety:0.20,kcal:220,protein:3},
+  {code:"C001",name:"巨无霸中套餐",price:39.5,cat:"set",tags:["牛","不辣","大份"],satiety:1.60,kcal:1040,protein:30},
+  {code:"C002",name:"麦辣鸡腿堡中套餐",price:36.0,cat:"set",tags:["鸡","辣","大份"],satiety:1.55,kcal:990,protein:28},
+  {code:"C003",name:"板烧鸡腿堡中套餐",price:37.0,cat:"set",tags:["鸡","不辣","大份"],satiety:1.55,kcal:960,protein:29},
+  {code:"C004",name:"双层吉士中套餐",price:33.5,cat:"set",tags:["牛","不辣","大份"],satiety:1.45,kcal:930,protein:26},
+  {code:"C005",name:"1+1 随心配",price:13.9,cat:"set",tags:["混搭","小份"],satiety:0.80,kcal:450,protein:13},
+  {code:"C006",name:"麦乐鸡分享盒",price:32.0,cat:"set",tags:["鸡","不辣","大份"],satiety:1.20,kcal:780,protein:38}
+];
+const COUPONS = [
+  {id:"CP001",name:"满 30 元减 5 元",threshold:30,discount:5,scope:"全场"},
+  {id:"CP002",name:"麦辣鸡腿堡第二份半价",threshold:0,discount:11.25,scope:"麦辣鸡腿堡"},
+  {id:"CP003",name:"中薯条 1 元购",threshold:20,discount:11.5,scope:"中薯条"},
+  {id:"CP004",name:"圆筒冰淇淋免费券",threshold:15,discount:6,scope:"圆筒冰淇淋"},
+  {id:"CP005",name:"巨无霸立减 5 元",threshold:0,discount:5,scope:"巨无霸"},
+  {id:"CP006",name:"外送免配送费",threshold:39,discount:9,scope:"麦乐送"}
+];
+const STORES = [
+  {code:"S001",name:"麦当劳（南京东路店）",addr:"上海市黄浦区南京东路 300 号",dist:320,hours:"07:00-23:00"},
+  {code:"S002",name:"麦当劳（人民广场店）",addr:"上海市黄浦区西藏中路 268 号",dist:780,hours:"24 小时"},
+  {code:"S003",name:"麦当劳（陆家嘴环路店）",addr:"上海市浦东新区陆家嘴环路 1000 号",dist:1500,hours:"07:00-22:30"}
+];
+const CAMPAIGNS = [
+  {date:"2026-10-12",title:"周一会员日",desc:"任意套餐立减 5 元，会员专享"},
+  {date:"2026-10-13",title:"麦麦省上新",desc:"9.9 元专区上新，麦辣鸡翅 2 块 9.9 元"},
+  {date:"2026-10-14",title:"麦乐送日",desc:"外送满 39 元免配送费"},
+  {date:"2026-10-16",title:"周末全家桶",desc:"双人套餐买一送一"}
+];
+const HISTORY = [
+  {date:"2026-10-01",items:[{name:"麦辣鸡腿堡",qty:1},{name:"中薯条",qty:1},{name:"中杯可乐",qty:1}],pay:44.5},
+  {date:"2026-10-03",items:[{name:"巨无霸",qty:2},{name:"大薯条",qty:1}],pay:65.0},
+  {date:"2026-10-05",items:[{name:"双层吉士汉堡",qty:1},{name:"热美式",qty:1}],pay:31.0},
+  {date:"2026-10-07",items:[{name:"麦辣鸡翅（2块）",qty:2},{name:"中杯雪碧",qty:1}],pay:34.5},
+  {date:"2026-10-09",items:[{name:"板烧鸡腿堡",qty:1},{name:"玉米杯",qty:1}],pay:33.0},
+  {date:"2026-10-10",items:[{name:"1+1 随心配",qty:1}],pay:13.9}
+];
+const QUIZ = [
+  {id:1,kind:"mcd",title:"你的「本命汉堡」是哪一个？",opts:[
+    {k:"A",t:"麦辣鸡腿堡——没辣不算吃饭",s:{spicy:2}},
+    {k:"B",t:"板烧鸡腿堡——不辣才香",s:{mild:2}},
+    {k:"C",t:"巨无霸——分量即正义",s:{mild:1,big:2}},
+    {k:"D",t:"麦香鱼——我吃得不多",s:{mild:1,light:1}}]},
+  {id:2,kind:"mcd",title:"一个人在麦当劳，你怎么点？",opts:[
+    {k:"A",t:"一个汉堡搞定，够了",s:{light:2}},
+    {k:"B",t:"汉堡+薯条+可乐，三件套才完整",s:{big:2,planner:1}},
+    {k:"C",t:"随心配随便来点，看心情",s:{light:1,hesitant:1,casual:1}},
+    {k:"D",t:"大套餐再加个小食，仪式感要有",s:{big:2,ritual:1}}]},
+  {id:3,kind:"mcd",title:"站在点餐屏前，你通常会——",opts:[
+    {k:"A",t:"3 秒下单，犹豫是浪费生命",s:{decisive:2,efficient:1}},
+    {k:"B",t:"来回翻三遍菜单还是没决定",s:{hesitant:2}},
+    {k:"C",t:"点老一套，稳定发挥",s:{decisive:1,stable:1}},
+    {k:"D",t:"问问旁边的人点什么",s:{hesitant:1,social:1}}]},
+  {id:4,kind:"mcd",title:"你的「麦麦时刻」更像哪种？",opts:[
+    {k:"A",t:"一个人安静吃完，手机也不看",s:{solo:2,stable:1}},
+    {k:"B",t:"必须拉上同事/朋友一起去",s:{party:2,social:1}},
+    {k:"C",t:"看情况，有人叫就去",s:{solo:1}},
+    {k:"D",t:"组队拼单凑满减，人多才划算",s:{party:2,saver:1}}]},
+  {id:5,kind:"mcd",title:"薯条你蘸什么？",opts:[
+    {k:"A",t:"番茄酱，经典永不过时",s:{mild:1,stable:1}},
+    {k:"B",t:"甜辣酱/辣椒粉，越辣越好",s:{spicy:2}},
+    {k:"C",t:"蘸冰淇淋，甜咸党在此",s:{mild:1,ritual:1}},
+    {k:"D",t:"什么都不蘸，原味最香",s:{casual:1}}]},
+  {id:6,kind:"daily",title:"早上闹钟响了，你的第一反应是——",opts:[
+    {k:"A",t:"立刻起床，绝不复睡",s:{efficient:2,morning:1}},
+    {k:"B",t:"五个闹钟连环轰炸才有用",s:{nightowl:2,procrastinate:1}},
+    {k:"C",t:"醒了，但先刷半小时手机",s:{nightowl:1,procrastinate:2}},
+    {k:"D",t:"我早就在健身房了",s:{morning:2,efficient:1}}]},
+  {id:7,kind:"daily",title:"理想的周末安排是——",opts:[
+    {k:"A",t:"睡到自然醒，然后随机出门",s:{casual:2}},
+    {k:"B",t:"提前排好行程表，按计划走",s:{planner:2,efficient:1}},
+    {k:"C",t:"约上一群人，热闹最重要",s:{social:2}},
+    {k:"D",t:"一个人窝着，安静充电",s:{stable:1,ritual:1}}]},
+  {id:8,kind:"daily",title:"网购时你更像——",opts:[
+    {k:"A",t:"三个平台比价，凑满减凑到最优",s:{saver:2,planner:1}},
+    {k:"B",t:"看到喜欢的直接下单",s:{casual:2}},
+    {k:"C",t:"加购物车冷静三天再说",s:{planner:1,procrastinate:1}},
+    {k:"D",t:"只买清单上的，多一点都不看",s:{efficient:2,planner:1}}]},
+  {id:9,kind:"daily",title:"你的一天通常怎么开始？",opts:[
+    {k:"A",t:"一杯咖啡不能少，否则无法启动",s:{caffeine:2}},
+    {k:"B",t:"先过一遍今天的待办清单",s:{planner:2,efficient:1}},
+    {k:"C",t:"全靠一股冲劲，想到哪做到哪",s:{casual:1,stable:1}},
+    {k:"D",t:"先发会儿呆，找回灵魂",s:{procrastinate:1,casual:1,nightowl:1}}]},
+  {id:10,kind:"daily",title:"朋友眼中的你，最像哪一句？",opts:[
+    {k:"A",t:"靠谱到可以把事情托付给他",s:{stable:2,toughsoft:1}},
+    {k:"B",t:"气氛组组长，走到哪热到哪",s:{social:2}},
+    {k:"C",t:"神出鬼没的深夜党",s:{nightowl:2}},
+    {k:"D",t:"嘴上嫌弃，但随叫随到",s:{toughsoft:2}}]}
+];
+
+const PERSONALITY = {
+  efficient:"效率至上",nightowl:"深夜活跃",planner:"计划控",social:"社交充电",
+  saver:"省钱天才",ritual:"仪式感",casual:"随性派",caffeine:"咖啡因依赖",
+  procrastinate:"拖延症晚期",morning:"早八战神",stable:"情绪稳定",toughsoft:"嘴硬心软"
+};
+const PERSONALITY_ORDER = Object.keys(PERSONALITY);
+
+const BOGE_BASE = {
+  "spicy|big":"巨无霸辣王","spicy|light":"椒香小钢炮",
+  "mild|big":"温柔巨塔","mild|light":"云朵轻食家"
+};
+const BOGE_SUFFIX = {
+  "decisive|solo":"单人成军","decisive|party":"组队指挥官",
+  "hesitant|solo":"午夜纠结体","hesitant|party":"选择困难队长"
+};
+const BOGE_BLURB = {
+  "巨无霸辣王":"辣度与分量双高，你的字典里没有“小份”。",
+  "椒香小钢炮":"个子不大，火力不小，二两肉三层辣。",
+  "温柔巨塔":"不辣但管饱，团队里那个最靠得住的人。",
+  "云朵轻食家":"吃的是氛围，不是热量。"
+};
+
+const TASTES = ["辣","不辣","鸡","牛","鱼","素","甜","冷","热","量足"];
+
+/* ============================================================
+   2. 工具
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const yuan = n => "¥" + (Math.round(n * 100) / 100).toFixed(2);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const idle = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 400 }) : setTimeout(fn, 1));
+
+/* rAF 合帧：高频重绘合并到下一帧 */
+function scheduleFrame(fn){
+  let queued = false;
+  return (...args) => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; fn(...args); });
+  };
+}
+
+/* 剪贴板：file:// 或非安全上下文下 navigator.clipboard 不可用，降级到 execCommand */
+function copyText(text){
+  const fallback = () => {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return !!ok;
+    } catch (e) { return false; }
+  };
+  try {
+    if (navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(text).then(() => true).catch(fallback);
+    }
+  } catch (e) { /* 落到 fallback */ }
+  return Promise.resolve(fallback());
+}
+
+/* Toast：轻量反馈，替代部分重型 modal */
+function toast(msg, kind, ms){
+  const wrap = $("#toastWrap");
+  const el = document.createElement("div");
+  el.className = "toast " + (kind || "ok");
+  el.innerHTML = (kind === "good" ? "✓ " : kind === "warn" ? "⚠ " : "🍔 ") + esc(msg);
+  wrap.appendChild(el);
+  const life = ms || 2200;
+  setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 260); }, life);
+  return el;
+}
+
+function showModal(title, body){
+  $("#modalTitle").textContent = title;
+  $("#modalBody").innerHTML = body;
+  $("#modal").classList.add("on");
+}
+function closeModal(){ $("#modal").classList.remove("on"); }
+$("#modalClose").onclick = closeModal;
+$("#modal").onclick = e => { if (e.target === $("#modal")) closeModal(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+function spendTier(pay){
+  if (pay < 25) return {level:"节俭度日", desc:"钱要花在刀刃上，吃饱是唯一 KPI。", span:"¥25 以下"};
+  if (pay < 40) return {level:"吃堡自由", desc:"想加薯条就加薯条，这就是自由的味道。", span:"¥25 - 40"};
+  return {level:"豪情在天", desc:"点单不看价的快乐，你值得拥有。", span:"¥40 以上"};
+}
+
+/* 名片就绪时的小彩带（尊重 reduced-motion） */
+function confettiBurst(host){
+  if (REDUCED || !host) return;
+  const box = document.createElement("div");
+  box.className = "confetti";
+  const colors = ["#DB0007", "#FFC72C", "#FFD84D", "#FFF0CC"];
+  for (let i = 0; i < 14; i++){
+    const p = document.createElement("i");
+    const a = (i / 14) * Math.PI * 2;
+    const d = 46 + Math.random() * 46;
+    p.style.setProperty("--dx", Math.cos(a) * d + "px");
+    p.style.setProperty("--dy", (Math.sin(a) * d - 30) + "px");
+    p.style.setProperty("--rot", (Math.random() * 360) + "deg");
+    p.style.background = colors[i % colors.length];
+    p.style.animationDelay = (Math.random() * 0.12) + "s";
+    box.appendChild(p);
+  }
+  host.appendChild(box);
+  setTimeout(() => box.remove(), 1200);
+}
+
+/* ============================================================
+   3. Tab 与懒初始化（首屏只渲染领券 Tab）
+   ============================================================ */
+const inited = { coupon: true };
+function ensureTab(tab){
+  if (inited[tab]) return;
+  inited[tab] = true;
+  if (tab === "quiz") idle(() => drawCard($("#quizCanvas"), quizCardData));
+  if (tab === "budget") idle(() => renderCart());
+}
+
+$$(".tab").forEach(btn => btn.onclick = () => {
+  $$(".tab").forEach(b => {
+    const on = b === btn;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  $$(".panel").forEach(p => p.classList.toggle("on", p.id === "p-" + btn.dataset.tab));
+  ensureTab(btn.dataset.tab);
+});
+
+/* ============================================================
+   4. ① 每日领券
+   ============================================================ */
+$("#btnCoupon").onclick = async () => {
+  const dry = $("#dryRun").checked;
+  const btn = $("#btnCoupon"); btn.disabled = true;
+  const log = $("#couponLog"); log.textContent = "";
+  const steps = [
+    "→ now-time-info        读取服务器时间…",
+    "→ campaign-calendar    拉取本月营销日历…",
+    "→ available-coupons    查询可领取优惠券…",
+    dry ? "→ auto-bind-coupons    试运行，跳过领取" : "→ auto-bind-coupons    一键领取中…",
+    "→ my-coupons           同步卡包并核算有效期…"
+  ];
+  for (let i = 0; i < steps.length; i++){
+    log.textContent += steps[i] + "\n";
+    $("#couponBar").style.width = ((i + 1) / steps.length * 100) + "%";
+    await sleep(420);
+  }
+  const bound = dry ? [] : COUPONS;
+  log.textContent += dry
+    ? "\n✓ 试运行完成：发现 " + COUPONS.length + " 张可领券，未实际领取。"
+    : "\n✓ 领取完成：本次领到 " + bound.length + " 张，卡包共 " + bound.length + " 张。";
+  renderCouponReport(bound, dry);
+  toast(dry ? "试运行完成" : `今日已领 ${bound.length} 张券`, "good");
+  btn.disabled = false;
+};
+
+function renderCouponReport(bound, dry){
+  $("#couponReport").style.display = "block";
+  const expiring = COUPONS.filter(c => c.id === "CP002" || c.id === "CP003" || c.id === "CP004");
+  $("#couponMetrics").innerHTML = [
+    ["本次领取", (dry ? 0 : COUPONS.length) + " 张"],
+    ["卡包总数", (dry ? 0 : COUPONS.length) + " 张"],
+    ["临期（3 天内）", expiring.length + " 张"],
+    ["今日活动", CAMPAIGNS.filter(c => c.date === "2026-10-12").length + " 个"]
+  ].map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join("");
+
+  $("#boundList").innerHTML = (bound.length ? bound : COUPONS).map(c =>
+    `<div class="cart"><span>${esc(c.name)}</span><span class="kv">${dry ? "待领取" : "已领取"}</span></div>`
+  ).join("");
+
+  $("#expireList").innerHTML = expiring.length
+    ? expiring.map(c => `<div class="cart"><span>${esc(c.name)}</span><span class="kv" style="color:#DB0007">快过期</span></div>`).join("")
+    : `<p class="sub">暂无临期券，安全。</p>`;
+
+  $("#campaignList").innerHTML = CAMPAIGNS.map(c =>
+    `<div class="cart"><span><b>${c.date}</b>　${esc(c.title)}</span><span class="kv">${esc(c.desc)}</span></div>`
+  ).join("");
+}
+
+/* ============================================================
+   5. ② 抽卡
+   ============================================================ */
+let quizAnswers = {};
+let quizCardData = null;
+let quizImageManual = null;
+let quizAutoImage = null;
+const activeImage = () => quizImageManual || quizAutoImage;
+
+const BOGE_ROLE = {
+  "巨无霸辣王": ["spicy", "feast"],
+  "椒香小钢炮": ["spicy", "lightmeal"],
+  "温柔巨塔": ["gentle", "feast"],
+  "云朵轻食家": ["gentle", "lightmeal"]
+};
+const TIER_ROLE = {
+  "节俭度日": ["thrifty", "burger"],
+  "吃堡自由": ["freedom", "burger"],
+  "豪情在天": ["hero", "burger"]
+};
+
+function hashStr(s){ let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) | 0; return Math.abs(h); }
+
+function pictureForRoles(roles, seed){
+  const list = window.MCD_PICTURES || [];
+  if (!list.length) return null;
+  for (const role of roles || []){
+    const hits = list.filter(p => p.toLowerCase().includes(role));
+    if (hits.length) return hits[hashStr(seed || "") % hits.length];
+  }
+  return null;
+}
+
+function renderQuizForm(){
+  $("#quizForm").innerHTML = QUIZ.map(q => `
+    <div class="q" data-qid="${q.id}">
+      <div class="qt"><span class="tag ${q.kind === 'daily' ? 'd' : ''}">${q.kind === 'mcd' ? '麦当劳' : '日常'}</span>Q${q.id}. ${esc(q.title)}</div>
+      ${q.opts.map(o => `<div class="opt" data-q="${q.id}" data-k="${o.k}" role="button" tabindex="0">${o.k}. ${esc(o.t)}</div>`).join("")}
+    </div>`).join("");
+
+  $$("#quizForm .opt").forEach(el => {
+    const pick = () => {
+      const qid = +el.dataset.q;
+      quizAnswers[qid] = el.dataset.k;
+      $$(`#quizForm .opt[data-q="${qid}"]`).forEach(o => o.classList.toggle("on", o === el));
+      $("#quizBar").style.width = (Object.keys(quizAnswers).length / QUIZ.length * 100) + "%";
+      if (Object.keys(quizAnswers).length === QUIZ.length) setTimeout(runQuiz, 260);
+    };
+    el.onclick = pick;
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(); } };
+  });
+}
+
+$("#btnQuizStart").onclick = () => {
+  quizAnswers = {};
+  $("#quizResult").style.display = "none";
+  $("#quizBarWrap").style.display = "block";
+  $("#quizBar").style.width = "0";
+  renderQuizForm();
+  $("#quizForm").scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"start"});
+};
+
+$("#btnQuizFast").onclick = () => { quizAnswers = {}; runQuiz(true); };
+
+$("#btnQuizRandom").onclick = () => {
+  quizAnswers = {};
+  QUIZ.forEach(q => quizAnswers[q.id] = q.opts[Math.floor(Math.random() * q.opts.length)].k);
+  runQuiz();
+};
+
+$("#btnQuizAgain").onclick = () => { $("#quizResult").style.display = "none"; $("#quizForm").innerHTML = ""; $("#btnQuizStart").click(); };
+
+function scoreAnswers(answers){
+  const raw = {};
+  QUIZ.forEach(q => {
+    const k = answers[q.id]; if (!k) return;
+    const o = q.opts.find(x => x.k === k); if (!o) return;
+    for (const key in o.s) raw[key] = (raw[key] || 0) + o.s[key];
+  });
+  return raw;
+}
+
+function scoreHistory(){
+  const raw = {};
+  const add = (k, v) => raw[k] = (raw[k] || 0) + v;
+  HISTORY.forEach(o => {
+    const names = o.items.map(i => i.name);
+    const joined = names.join(" ");
+    const qty = o.items.reduce((a, i) => a + i.qty, 0);
+    if (joined.includes("辣")) add("spicy", 2);
+    if (/板烧|吉士|巨无霸|麦香鱼/.test(joined)) add("mild", 1);
+    if (qty >= 3 || o.pay >= 40) add("big", 2); else if (qty <= 2) add("light", 1);
+    if (/套餐|随心配/.test(joined)) add("big", 1);
+    if (names.filter(n => n.includes("辣")).length >= 2) add("spicy", 1);
+    if (new Set(names).size <= 2) add("decisive", 1);
+    if (qty >= 4) add("party", 1); else add("solo", 1);
+  });
+  if (HISTORY.length >= 5){ add("saver", 2); add("planner", 1); }
+  return raw;
+}
+
+function runQuiz(fromHistory){
+  const raw = fromHistory ? scoreHistory() : scoreAnswers(quizAnswers);
+  const axes = {
+    spicy: (raw.spicy || 0) >= (raw.mild || 0) ? "spicy" : "mild",
+    appetite: (raw.big || 0) >= (raw.light || 0) ? "big" : "light",
+    decision: (raw.decisive || 0) >= (raw.hesitant || 0) ? "decisive" : "hesitant",
+    social: (raw.party || 0) >= (raw.solo || 0) ? "party" : "solo"
+  };
+  const ranked = PERSONALITY_ORDER.slice().sort((a, b) => (raw[b] || 0) - (raw[a] || 0));
+  const personalities = ranked.filter(k => (raw[k] || 0) > 0).slice(0, 2).map(k => PERSONALITY[k]);
+  if (!personalities.length) personalities.push(PERSONALITY[ranked[0]]);
+
+  const base = BOGE_BASE[axes.spicy + "|" + axes.appetite];
+  const suffix = BOGE_SUFFIX[axes.decision + "|" + axes.social];
+  const boge = base + "·" + suffix;
+  const name = personalities[0] + "·" + boge + "奶龙";
+
+  const combo = recommendCombo(axes);
+  const price = priceItems(combo.map(c => ({code:c.code, qty:1})), "dine_in");
+
+  quizAutoImage = pictureForRoles(BOGE_ROLE[base] || ["burger"], name);
+
+  quizCardData = {
+    badge: "抽卡", title: name, eyebrow: "麦麦奶龙 · 堡格名片",
+    chips: ["性格 · " + personalities[0], "辣度 · " + (axes.spicy === "spicy" ? "辣党" : "温柔党"),
+            "食量 · " + (axes.appetite === "big" ? "巨胃" : "轻食"), "社交 · " + (axes.social === "party" ? "组队型" : "独食型")],
+    info: [["堡格", boge], ["推荐", combo.map(c => c.name).join(" + ") + "　实付 " + yuan(price.pay)]],
+    image: activeImage()
+  };
+
+  $("#quizResult").style.display = "block";
+  $("#quizAxes").innerHTML = [
+    "辣度 · " + (axes.spicy === "spicy" ? "辣党" : "温柔党"),
+    "食量 · " + (axes.appetite === "big" ? "巨胃" : "轻食"),
+    "决策 · " + (axes.decision === "decisive" ? "果决派" : "纠结派"),
+    "社交 · " + (axes.social === "party" ? "组队型" : "独食型")
+  ].map(t => `<span class="pill">${t}</span>`).join("");
+  $("#quizPersonality").innerHTML = personalities.map(t => `<span class="pill red">${t}</span>`).join("");
+  $("#quizBoge").innerHTML = `<b>${esc(boge)}</b><br>${esc(BOGE_BLURB[base] || "")}`;
+  $("#quizCombo").innerHTML = combo.map(c =>
+    `<div class="cart"><span>${esc(c.name)}</span><span class="kv">${yuan(c.price)}</span></div>`
+  ).join("") + `<div class="cart"><span><b>实付</b></span><span class="kv" style="color:#DB0007;font-weight:700">${yuan(price.pay)}</span></div>`;
+
+  drawCard($("#quizCanvas"), quizCardData);
+  confettiBurst($("#quizCardWrap"));
+  $("#quizBarWrap").style.display = "none";
+  $("#quizResult").scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"start"});
+}
+
+function recommendCombo(axes){
+  const spicy = axes.spicy === "spicy", big = axes.appetite === "big";
+  let pool = MENU.filter(m => m.cat === "burger" && (spicy ? m.tags.includes("辣") : !m.tags.includes("辣")));
+  if (!pool.length) pool = MENU.filter(m => m.cat === "burger");
+  pool.sort((a, b) => big ? b.satiety - a.satiety : a.satiety - b.satiety);
+  const main = pool[0];
+  const set = MENU.find(m => m.cat === "set" && m.name.includes(main.name));
+  if (set) return [set];
+  const out = [main];
+  const sides = MENU.filter(m => m.cat === "side").sort((a, b) => b.satiety - a.satiety);
+  const drinks = MENU.filter(m => m.cat === "drink");
+  if (sides.length) out.push(big ? sides[0] : sides[sides.length - 1]);
+  if (big && drinks.length) out.push(drinks[0]);
+  return out;
+}
+
+$("#quizImg").onchange = e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    quizImageManual = reader.result;
+    if (quizCardData){ quizCardData.image = activeImage(); drawCard($("#quizCanvas"), quizCardData); }
+    toast("底图已替换", "good");
+  };
+  reader.readAsDataURL(file);
+};
+
+/* ============================================================
+   6. ③ 穷鬼预算锁
+   ============================================================ */
+let tastes = [];
+let plans = [];
+let cart = [];
+
+$("#tasteChips").innerHTML = TASTES.map(t => `<button class="chip" data-t="${t}">${t}</button>`).join("");
+$$("#tasteChips .chip").forEach(el => el.onclick = () => {
+  const t = el.dataset.t;
+  if (tastes.includes(t)) { tastes = tastes.filter(x => x !== t); el.className = "chip"; el.textContent = t; }
+  else if (tastes.includes("-" + t)) { tastes = tastes.filter(x => x !== "-" + t); el.className = "chip"; el.textContent = t; }
+  else if (tastes.length < 3) { tastes.push(t); el.className = "chip on"; el.textContent = t + " ✓"; }
+  else { tastes.push("-" + t); el.className = "chip ban"; el.textContent = "排除 " + t; }
+});
+
+$("#budget").oninput = e => $("#budgetLabel").textContent = yuan(+e.target.value).replace(".00", "");
+$("#store").innerHTML = STORES.map(s => `<option value="${s.code}">${esc(s.name)}　·　${s.distance || s.dist}m　·　${s.hours}</option>`).join("");
+$("#addItem").innerHTML = MENU.map(m => `<option value="${m.code}">${esc(m.name)}　${yuan(m.price)}</option>`).join("");
+
+/* ---------- 求解核心（与 scripts/budget_solver.py 同构，未改动） ---------- */
+function matches(item, token){ return token === "量足" ? item.satiety >= 1 : item.tags.includes(token); }
+
+function tasteGate(item, wants, avoids, strict){
+  for (const a of avoids) if (matches(item, a)) return false;
+  if (!strict) return true;
+  if (wants.includes("辣") && item.tags.includes("不辣")) return false;
+  if (wants.includes("不辣") && item.tags.includes("辣")) return false;
+  if (wants.includes("素") && ["牛","鸡","鱼"].some(x => item.tags.includes(x))) return false;
+  return true;
+}
+
+function itemScore(item, wants, avoids){
+  let s = 0;
+  wants.forEach(w => { if (matches(item, w)) s += 2; });
+  avoids.forEach(a => { if (matches(item, a)) s -= 3; });
+  const hard = {辣:"不辣", 不辣:"辣", 素:"牛"};
+  wants.forEach(w => { const o = hard[w]; if (o && matches(item, o)) s -= 3; });
+  return s;
+}
+
+function bestCoupon(subtotal, names, mode){
+  let best = 0;
+  COUPONS.forEach(c => {
+    if (subtotal < c.threshold) return;
+    if (c.scope && c.scope !== "全场"){
+      if (!names.includes(c.scope)) return;
+      if (c.id === "CP002" && names.split("麦辣鸡腿堡").length - 1 < 2) return;
+    }
+    best = Math.max(best, c.discount);
+  });
+  if (mode === "delivery" && names.includes("麦乐送")) best = Math.max(best, 0);
+  return best;
+}
+
+function priceItems(items, mode){
+  let subtotal = 0; const names = [];
+  items.forEach(it => {
+    const m = MENU.find(x => x.code === it.code); if (!m) return;
+    subtotal += m.price * it.qty; names.push(m.name);
+  });
+  const nameStr = names.join(" ");
+  const discount = bestCoupon(subtotal, nameStr, mode);
+  const delivery = mode === "delivery" ? (subtotal >= 39 ? 0 : 9) : 0;
+  return { subtotal: r2(subtotal), discount: r2(discount), delivery: r2(delivery), pay: r2(Math.max(subtotal - discount, 0) + delivery) };
+}
+const r2 = n => Math.round(n * 100) / 100;
+
+function solveBudget(budget, wants, avoids, mode){
+  const burgers = MENU.filter(m => (m.cat === "burger" || m.cat === "set") && tasteGate(m, wants, avoids, true));
+  const sides = MENU.filter(m => m.cat === "side" && tasteGate(m, wants, avoids, false));
+  const drinks = MENU.filter(m => m.cat === "drink" && tasteGate(m, wants, avoids, false));
+  const desserts = MENU.filter(m => m.cat === "dessert" && tasteGate(m, wants, avoids, false));
+  const rSides = sides.slice().sort((a, b) => b.satiety - a.satiety).slice(0, 3);
+  const rDrinks = drinks.slice().sort((a, b) => a.price - b.price).slice(0, 3);
+  const rDesserts = desserts.slice().sort((a, b) => a.price - b.price).slice(0, 2);
+
+  let bundles = [];
+  burgers.forEach(b => {
+    bundles.push([b]);
+    rSides.forEach(s => bundles.push([b, s]));
+    rDrinks.forEach(d => bundles.push([b, d]));
+    if (rSides.length && rDrinks.length) bundles.push([b, rSides[0], rDrinks[0]]);
+    rDesserts.forEach(d => bundles.push([b, d]));
+  });
+  const seen = new Set(); const uniq = [];
+  bundles.forEach(b => { const k = b.map(x => x.code).sort().join("|"); if (!seen.has(k)){ seen.add(k); uniq.push(b); } });
+
+  let rows = uniq.map(b => {
+    const raw = r2(b.reduce((a, m) => a + m.price, 0));
+    const satiety = r2(b.reduce((a, m) => a + m.satiety, 0));
+    const taste = b.reduce((a, m) => a + itemScore(m, wants, avoids), 0);
+    const variety = new Set(b.map(m => m.cat)).size;
+    return { bundle: b, raw, satiety, taste, variety,
+      kcal: b.reduce((a, m) => a + m.kcal, 0), protein: b.reduce((a, m) => a + m.protein, 0),
+      value: raw ? satiety / raw : 0 };
+  });
+  if (!rows.length) return { ok:false, reason:"没有匹配口味的餐品，换个口味试试。" };
+
+  const maxSat = Math.max(...rows.map(r => r.satiety)) || 1;
+  const maxVal = Math.max(...rows.map(r => r.value)) || 1;
+  const wantN = Math.max(wants.length, 1);
+  rows.forEach(r => {
+    const tN = Math.max(Math.min(r.taste / (2 * wantN), 1), -1);
+    r.score = Math.round(100 * (0.45 * tN + 0.25 * (r.value / maxVal) + 0.30 * (r.satiety / maxSat)) + (r.variety - 1) * 3);
+  });
+
+  const ceiling = budget * 1.15 + 10;
+  rows.forEach(r => { r.est = r2(r.raw - bestCoupon(r.raw, r.bundle.map(m => m.name).join(" "), mode)); });
+  const pre = rows.filter(r => r.est <= ceiling);
+  const byScore = pre.slice().sort((a, b) => b.score - a.score).slice(0, 16);
+  const byPrice = pre.slice().sort((a, b) => a.est - b.est).slice(0, 8);
+  const byRatio = pre.slice().sort((a, b) => (b.score / (b.est || 1)) - (a.score / (a.est || 1))).slice(0, 6);
+  const bands = new Map();
+  pre.forEach(r => {
+    const b = Math.floor(r.est / 5);
+    const cur = bands.get(b);
+    if (!cur || r.score > cur.score) bands.set(b, r);
+  });
+  const byBand = Array.from(bands.values()).sort((a, b) => a.est - b.est).slice(0, 8);
+
+  const pool = []; const seenPool = new Set();
+  byScore.concat(byBand, byPrice, byRatio).forEach(r => {
+    const k = r.bundle.map(m => m.code).join("|");
+    if (seenPool.has(k) || pool.length >= 30) return;
+    seenPool.add(k); pool.push(r);
+  });
+
+  const viable = [];
+  pool.forEach(r => {
+    const p = priceItems(r.bundle.map(m => ({ code:m.code, qty:1 })), mode);
+    if (p.pay <= budget) viable.push(Object.assign({}, r, p, { items: r.bundle.map(m => ({ code:m.code, name:m.name, qty:1 })) }));
+  });
+  if (!viable.length) return { ok:false, reason:`预算 ${yuan(budget)} 内没有可行组合，试试放宽到 ${yuan(budget + 5)}。` };
+
+  const front = viable.filter(r => !viable.some(o =>
+    o !== r && o.pay <= r.pay && o.score >= r.score && (o.pay < r.pay || o.score > r.score)));
+  front.sort((a, b) => a.pay - b.pay || b.score - a.score);
+
+  const key = r => r.items.map(i => i.code + "x" + i.qty).sort().join("|");
+  const cheapest = front.slice().sort((a, b) => a.pay - b.pay || b.score - a.score)[0];
+  const richest  = front.slice().sort((a, b) => b.score - a.score)[0];
+  const bestVal  = front.slice().sort((a, b) => (b.score / b.pay) - (a.score / a.pay))[0];
+  const chosen = []; const used = new Set();
+  [cheapest, bestVal, richest, ...front].forEach(r => { const k = key(r); if (chosen.length < 3 && !used.has(k)){ used.add(k); chosen.push(r); } });
+
+  const minPay = Math.min(...chosen.map(r => r.pay));
+  const maxScore = Math.max(...chosen.map(r => r.score));
+  const taken = new Set();
+  const tagged = chosen.map(r => {
+    let tag;
+    if (r.pay === minPay && !taken.has("极致省钱")) tag = "极致省钱";
+    else if (r.score === maxScore && !taken.has("最满足")) tag = "最满足";
+    else if (!taken.has("性价比之王")) tag = "性价比之王";
+    else tag = "备选方案";
+    taken.add(tag);
+    return { tag, reason: {
+      "极致省钱":"花最少的钱把肚子填上，预算红线的守门人。",
+      "性价比之王":"每块钱换到的满足感最高，学生党最优解。",
+      "最满足":"预算内的天花板，吃到扶墙走。",
+      "备选方案":"预算内的另一个可行解。" }[tag], row: r };
+  });
+  if (tagged.length < 3){
+    const usedKeys = new Set(tagged.map(t => key(t.row)));
+    viable.slice().sort((a, b) => b.score - a.score || a.pay - b.pay).forEach(r => {
+      if (tagged.length >= 3) return;
+      const k = key(r);
+      if (usedKeys.has(k)) return;
+      usedKeys.add(k);
+      tagged.push({ tag:"备选方案", reason:"预算内的另一个可行解。", row: r });
+    });
+  }
+
+  const order = ["极致省钱","性价比之王","最满足","备选方案"];
+  tagged.sort((a, b) => order.indexOf(a.tag) - order.indexOf(b.tag));
+
+  return { ok:true, scanned: uniq.length, verified: viable.length, frontSize: front.length, plans: tagged };
+}
+/* ---------- 求解核心结束 ---------- */
+
+$("#btnSolve").onclick = () => {
+  const budget = +$("#budget").value;
+  const mode = $("#mode").value;
+  const wants = tastes.filter(t => !t.startsWith("-"));
+  const avoids = tastes.filter(t => t.startsWith("-")).map(t => t.slice(1));
+  const res = solveBudget(budget, wants, avoids, mode);
+
+  $("#solveResult").style.display = "block";
+  if (!res.ok){
+    $("#solveMeta").textContent = res.reason;
+    $("#planList").innerHTML = "";
+    toast(res.reason, "warn", 3200);
+    return;
+  }
+  $("#solveMeta").textContent =
+    `门店 ${$("#store").selectedOptions[0].textContent.split("　")[0]}　·　枚举 ${res.scanned} 种组合 → 可行 ${res.verified} 种 → Pareto 前沿 ${res.frontSize} 个`;
+
+  plans = res.plans;
+  $("#planList").innerHTML = res.plans.map((p, i) => {
+    const r = p.row, tier = spendTier(r.pay);
+    return `<div class="plan" data-i="${i}">
+      <div class="hd"><span class="pill ${p.tag === "最满足" ? "red" : ""}">${p.tag}</span><span class="price">${yuan(r.pay)}</span></div>
+      <ul>${r.items.map(it => `<li><span>${esc(it.name)}</span><span class="kv">×${it.qty}</span></li>`).join("")}</ul>
+      <div class="kv">
+        原价 ${yuan(r.subtotal)}　优惠 ${yuan(r.discount)}${r.delivery ? "　配送 " + yuan(r.delivery) : ""}<br>
+        满足度 ${r.satiety}　·　每元饱腹 ${(r.pay / r.satiety).toFixed(2)} 元/点<br>
+        ${r.kcal} kcal　蛋白 ${r.protein}g　·　${tier.level}
+      </div>
+      <div style="margin-top:10px"><button class="btn ghost sm" data-load="${i}">载入购物车</button></div>
+    </div>`;
+  }).join("");
+
+  $$("#planList [data-load]").forEach(b => b.onclick = () => loadPlan(+b.dataset.load));
+  if (res.plans.length) loadPlan(0);
+  toast(`已求解，给你 ${res.plans.length} 套方案`, "good");
+  $("#solveResult").scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"start"});
+};
+
+function loadPlan(i){
+  const p = plans[i]; if (!p) return;
+  cart = p.row.items.map(it => ({ code: it.code, qty: it.qty }));
+  $$("#planList .plan").forEach((el, idx) => el.classList.toggle("picked", idx === i));
+  renderCart();
+}
+
+function renderCart(){
+  $("#cartBox").style.display = "block";
+  if (!cart.length){
+    $("#cartList").innerHTML = `
+      <div class="empty">
+        <svg width="40" height="40" viewBox="0 0 34 34" aria-hidden="true">
+          <ellipse cx="17" cy="19" rx="11" ry="12" fill="#FFE9A8"/>
+          <ellipse cx="12" cy="15" rx="3" ry="3.4" fill="#FFFFFF"/><ellipse cx="22" cy="15" rx="3" ry="3.4" fill="#FFFFFF"/>
+          <circle cx="12.6" cy="16" r="1.4" fill="#2B2118"/><circle cx="22.6" cy="16" r="1.4" fill="#2B2118"/>
+          <path d="M13.5 24.5 Q17 21.5 20.5 24.5" stroke="#2B2118" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        </svg>
+        <p class="empty-title">购物车空空如也，奶龙都饿了</p>
+        <p class="sub">先载入上面的一个方案，或手动加购</p>
+      </div>`;
+    return;
+  }
+
+  $("#cartList").innerHTML = cart.map((it, i) => {
+    const m = MENU.find(x => x.code === it.code) || { name: it.code, price: 0 };
+    return `<div class="cart">
+      <span>${esc(m.name)}</span>
+      <span class="stepper">
+        <button data-dec="${i}" aria-label="减少">−</button><b>${it.qty}</b><button data-inc="${i}" aria-label="增加">+</button>
+        <span class="kv" style="width:64px;text-align:right">${yuan(m.price * it.qty)}</span>
+        <button data-del="${i}" title="删除" aria-label="删除">×</button>
+      </span></div>`;
+  }).join("");
+
+  $$("#cartList [data-inc]").forEach(b => b.onclick = () => { cart[+b.dataset.inc].qty++; renderCart(); });
+  $$("#cartList [data-dec]").forEach(b => b.onclick = () => { const i = +b.dataset.dec; if (--cart[i].qty <= 0) cart.splice(i, 1); renderCart(); });
+  $$("#cartList [data-del]").forEach(b => b.onclick = () => { cart.splice(+b.dataset.del, 1); renderCart(); });
+
+  const mode = $("#mode").value;
+  const p = priceItems(cart, mode);
+  const tier = spendTier(p.pay);
+  $("#mSub").textContent = yuan(p.subtotal);
+  $("#mDisc").textContent = "-" + yuan(p.discount);
+  $("#mDeliv").textContent = yuan(p.delivery);
+  $("#mPay").textContent = yuan(p.pay);
+  $("#tierBox").innerHTML = `<span class="pill red">消费等级 · ${tier.level}</span>
+    <p class="sub" style="margin-top:8px">${tier.desc}（区间 ${tier.span}）</p>`;
+}
+
+$("#btnAdd").onclick = () => {
+  const code = $("#addItem").value;
+  const found = cart.find(c => c.code === code);
+  if (found) found.qty++; else cart.push({ code, qty: 1 });
+  renderCart();
+};
+
+let lastOrderPay = 0, lastOrderBurger = "";
+$("#btnOrder").onclick = async () => {
+  if (!cart.length){ toast("购物车是空的，先加点东西", "warn"); return; }
+  const p = priceItems(cart, $("#mode").value);
+  const tier = spendTier(p.pay);
+  const log = $("#orderLog");
+
+  const ok = await confirmDialog(
+    `确认下单？实付 <b>${yuan(p.pay)}</b>，门店「${$("#store").selectedOptions[0].textContent.split("　")[0]}」` +
+    `<br><span style="color:#7A6A5A">只会生成一笔「待支付」订单，<b>不会扣款</b>；付款需要你自己在官方扫码支付页完成。</span>`
+  );
+  if (!ok){ log.textContent = "已取消，未创建订单。"; return; }
+
+  const orderId = "MO" + Math.floor(1e7 + Math.random() * 9e7);
+  const pickup = "A" + Math.floor(100 + Math.random() * 900);
+  const payUrl = `https://m.mcd.cn/mcp/scanToPay?orderId=${orderId}`;
+  lastOrderPay = p.pay; lastOrderBurger = (cart[0] && MENU.find(m => m.code === cart[0].code) || {}).name || "汉堡";
+
+  log.textContent = "→ calculate-price / create-order   创建待支付订单中…";
+  await sleep(700);
+  log.textContent +=
+    `\n订单已创建：${orderId}\n状态：待支付（leftPaySecond ≈ 899）\n支付链接：${payUrl}\n消费等级：${tier.level}` +
+    `\n\n⚠ create-order 不会扣款：请用手机打开上面的官方扫码支付页自行付款，` +
+    `\n  15 分钟内未支付，订单会被自动取消。\n\n→ query-order    开始蹲号（每 3s 一次，模拟已完成支付）…`;
+
+  const seq = ["PREPARING|制作中", "PREPARING|制作中", "READY|餐品已就绪，请取餐"];
+  for (const s of seq){
+    await sleep(1400);
+    const [st, txt] = s.split("|");
+    log.textContent += `\n[${new Date().toLocaleTimeString("zh-CN", {hour12:false})}] ${txt}　取餐号 ${pickup}`;
+    if (st === "READY"){
+      log.textContent += `\n\n████████████████████████████████\n  🍔 可以取餐了！取餐号：${pickup}\n████████████████████████████████`;
+      beep();
+      toast(`可以取餐了，取餐号 ${pickup}`, "good", 3600);
+    }
+  }
+};
+
+function confirmDialog(msg){
+  return new Promise(resolve => {
+    showModal("确认操作", msg + `<div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn" id="cfmYes">确认</button>
+      <button class="btn ghost" id="cfmNo">取消</button></div>`);
+    $("#cfmYes").onclick = () => { closeModal(); resolve(true); };
+    $("#cfmNo").onclick = () => { closeModal(); resolve(false); };
+  });
+}
+
+$("#btnBudgetCard").onclick = () => {
+  if (!lastOrderPay){ showModal("还没下单", "先点「确认下单」生成订单，System 会按实付金额生成对应消费等级的奶龙名片。"); return; }
+  const tier = spendTier(lastOrderPay);
+  const data = {
+    badge: "消费", eyebrow: "麦麦奶龙 · 消费名片",
+    title: tier.level + "·" + lastOrderBurger + "奶龙",
+    chips: ["消费等级 · " + tier.level, "实付 " + yuan(lastOrderPay), "区间 · " + tier.span],
+    info: [["主餐", lastOrderBurger], ["等级", tier.desc]],
+    image: quizImageManual || pictureForRoles(TIER_ROLE[tier.level] || ["burger"], tier.level)
+  };
+  budgetCardData = data;
+  $("#budgetCanvas").style.display = "block";
+  $("#budgetShare").style.display = "flex";
+  drawCard($("#budgetCanvas"), data);
+  confettiBurst($("#budgetCardWrap"));
+  $("#budgetCanvas").scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"center"});
+};
+let budgetCardData = null;
+
+/* ============================================================
+   7. 名片卡绘制（canvas 1600×900，与 card_gen.py 版式一致）
+   ============================================================ */
+const CW = 1600, CH = 900, PANEL_TOP = 470;
+const FONT_STACK = '"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif';
+
+function drawCard(canvas, data){
+  const ctx = canvas.getContext("2d");
+  const draw = img => {
+    ctx.clearRect(0, 0, CW, CH);
+    ctx.fillStyle = "#FFF9F0"; ctx.fillRect(0, 0, CW, CH);
+    if (img) ctx.drawImage(img, 0, 0, CW, CH);
+    else drawMascot(ctx);
+
+    ctx.fillStyle = "#DB0007"; ctx.fillRect(0, 0, CW, 12);
+    ctx.fillStyle = "#FFC72C"; ctx.fillRect(0, CH - 12, CW, 12);
+
+    ctx.fillStyle = "#DB0007";
+    const bw = 40 + measure(data.badge, 28, "700");
+    roundRect(ctx, 56, 52, bw, 58, 29); ctx.fill();
+    ctx.fillStyle = "#FFFFFF"; ctx.font = `700 28px ${FONT_STACK}`; ctx.textBaseline = "middle";
+    ctx.fillText(data.badge, 76, 82);
+
+    ctx.fillStyle = "#FFF9F0"; ctx.globalAlpha = 0.95; ctx.fillRect(0, PANEL_TOP, CW, CH - PANEL_TOP);
+    ctx.globalAlpha = 1; ctx.fillStyle = "#FFC72C"; ctx.fillRect(0, PANEL_TOP, CW, 5);
+
+    ctx.fillStyle = "#DB0007"; ctx.font = `400 26px ${FONT_STACK}`; ctx.textBaseline = "alphabetic";
+    ctx.fillText(data.eyebrow, 64, 534);
+
+    let size = 64; let lines = wrapText(data.title, 1472, size);
+    while (lines.length > 2 && size > 34){ size -= 6; lines = wrapText(data.title, 1472, size); }
+    ctx.fillStyle = "#2B2118"; ctx.font = `700 ${size}px ${FONT_STACK}`;
+    let y = 596; lines.slice(0, 2).forEach(l => { ctx.fillText(l, 64, y); y += size * 1.2; });
+
+    let cx = 64;
+    ctx.textBaseline = "middle";
+    (data.chips || []).forEach(chip => {
+      const w = measure(chip, 24) + 36;
+      if (cx + w > 1536) return;
+      ctx.fillStyle = "#FFEFD0"; roundRect(ctx, cx, 722 - 34, w, 46, 23); ctx.fill();
+      ctx.strokeStyle = "#F0DCB4"; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = "#8A5A12"; ctx.font = `400 24px ${FONT_STACK}`;
+      ctx.fillText(chip, cx + 18, 722);
+      cx += w + 14;
+    });
+
+    ctx.textBaseline = "alphabetic";
+    let iy = 792;
+    (data.info || []).slice(0, 2).forEach(([label, value]) => {
+      if (!value) return;
+      ctx.fillStyle = "#8A7A6A"; ctx.font = `400 26px ${FONT_STACK}`; ctx.fillText(label, 64, iy);
+      ctx.fillStyle = "#2B2118"; ctx.font = `400 28px ${FONT_STACK}`;
+      ctx.fillText(ellipsize(String(value), 1472 - 92, 28), 156, iy);
+      iy += 40;
+    });
+
+    ctx.fillStyle = "#B0A395"; ctx.font = `400 22px ${FONT_STACK}`; ctx.textAlign = "center";
+    ctx.fillText(`开源仓库：${REPO_URL}　·　麦麦奶龙 汉堡抽卡 & 穷鬼预算锁`, CW / 2, 866);
+    ctx.textAlign = "left";
+  };
+
+  if (data.image){
+    const img = new Image();
+    img.onload = () => draw(img);
+    img.onerror = () => draw(null);
+    img.src = data.image;
+  } else {
+    draw(null);
+  }
+}
+
+function drawMascot(ctx){
+  ctx.fillStyle = "#FFF3CC"; ctx.fillRect(0, 0, CW, PANEL_TOP + 60);
+  ctx.fillStyle = "#FFE9A8";
+  [[280, 170, 130], [1340, 230, 165]].forEach(([x, y, r]) => { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); });
+  ctx.fillStyle = "#F2CE55";
+  ctx.beginPath(); ctx.ellipse(800, 430, 300, 74, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = "#FFD84D";
+  [[540, 250, 66, 38, -0.25], [1060, 250, 66, 38, 0.25]].forEach(([x, y, rx, ry, rot]) => {
+    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, rot, 0, 7); ctx.fill();
+  });
+  ctx.beginPath(); ctx.ellipse(800, 380, 250, 268, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = "#FFFFFF";
+  [[712, 320, 52, 58], [888, 320, 52, 58]].forEach(([x, y, rx, ry]) => { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); });
+  ctx.fillStyle = "#2B2118";
+  [[722, 334, 24], [898, 334, 24]].forEach(([x, y, r]) => { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); });
+  ctx.strokeStyle = "#2B2118"; ctx.lineWidth = 16; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(730, 458); ctx.quadraticCurveTo(800, 516, 870, 458); ctx.stroke();
+  ctx.fillStyle = "rgba(240,140,140,.45)";
+  [[672, 420, 34, 20], [928, 420, 34, 20]].forEach(([x, y, rx, ry]) => { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); });
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function measure(text, size, weight){
+  const c = measure.ctx || (measure.ctx = document.createElement("canvas").getContext("2d"));
+  c.font = `${weight || 400} ${size}px ${FONT_STACK}`;
+  return c.measureText(text).width;
+}
+function wrapText(text, maxW, size){
+  const out = []; let cur = "";
+  for (const ch of text){
+    if (cur && measure(cur + ch, size, "700") > maxW){ out.push(cur); cur = ch; }
+    else cur += ch;
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+function ellipsize(text, maxW, size){
+  if (measure(text, size) <= maxW) return text;
+  let out = "";
+  for (const ch of text){ if (measure(out + ch + "…", size) > maxW) break; out += ch; }
+  return out + "…";
+}
+
+/* ============================================================
+   8. 导出与分享
+   ============================================================ */
+function exportPng(canvas, filename){
+  try {
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url; a.download = filename + ".png"; a.click();
+    toast("名片已导出", "good");
+  } catch (e){
+    showModal("无法直接导出", "当前底图受浏览器同源策略限制，canvas 无法导出。<br>解决办法：直接对卡片截图保存，或上传本地图片后再导出。");
+  }
+}
+
+function beep(){
+  if (REDUCED) return;
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1180, 880, 1180].forEach((f, i) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.frequency.value = f; o.connect(g); g.connect(ac.destination);
+      g.gain.setValueAtTime(0.0001, ac.currentTime + i * 0.22);
+      g.gain.exponentialRampToValueAtTime(0.15, ac.currentTime + i * 0.22 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + i * 0.22 + 0.2);
+      o.start(ac.currentTime + i * 0.22); o.stop(ac.currentTime + i * 0.22 + 0.21);
+    });
+  } catch (e){ /* 静默 */ }
+}
+
+function shareText(title){
+  return `我抽到了「${title}」！\n16:9 奶龙名片已生成 🍔\n项目开源：${REPO_URL}\n—— 麦麦奶龙 · 麦当劳 MCP 创意 Skill`;
+}
+
+async function shareCard(canvas, title){
+  const text = shareText(title);
+  try {
+    const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+    if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], "card.png", { type: "image/png" })] })){
+      await navigator.share({ files: [new File([blob], title + ".png", { type: "image/png" })], text });
+      return;
+    }
+  } catch (e){ /* 落到文案提示 */ }
+  showModal("分享到微信 / QQ",
+    `① 先点「下载 PNG」把名片存到本地<br>
+     ② 打开微信 / QQ，发送图片给好友、群聊，或发朋友圈 / QQ 空间<br>
+     ③ 图文一起发效果更好，直接粘贴下面这段：<br>
+     <textarea readonly style="width:100%;height:96px;margin-top:10px;border:1px solid #EADFCB;border-radius:10px;padding:10px;font-family:inherit;font-size:13px">${esc(text)}</textarea>
+     <button class="btn ghost sm" id="modalCopy" style="margin-top:8px">复制文案</button>`);
+  const btn = $("#modalCopy");
+  if (btn) btn.onclick = async () => { btn.textContent = (await copyText(text)) ? "已复制 ✓" : "请手动选中复制"; };
+}
+
+$("#dlQuiz").onclick     = () => exportPng($("#quizCanvas"),   quizCardData ? quizCardData.title : "card");
+$("#shareQuiz").onclick  = () => shareCard($("#quizCanvas"),   quizCardData ? quizCardData.title : "card");
+$("#copyQuiz").onclick   = async () => {
+  const ok = await copyText(shareText(quizCardData ? quizCardData.title : ""));
+  if (ok) toast("分享文案已复制", "good");
+  else showModal("复制失败", "当前环境不允许自动复制，请手动选中文本复制。");
+};
+$("#dlBudget").onclick   = () => exportPng($("#budgetCanvas"), budgetCardData ? budgetCardData.title : "card");
+$("#shareBudget").onclick= () => shareCard($("#budgetCanvas"), budgetCardData ? budgetCardData.title : "card");
+
+/* picture/ 里有素材时，提供一键换底图 */
+(function initPresets(){
+  const list = (window.MCD_PICTURES || []).slice(0, 6);
+  const box = $("#imgPresets");
+  if (!list.length){ box.innerHTML = `<span class="kv" style="font-size:12px;color:var(--muted)">picture/ 暂无素材，正在使用内置占位图。放入 16:9 奶龙梗图并执行 <span class="kbd">python scripts/fetch_pictures.py --manifest</span> 即可自动出现在这里。</span>`; return; }
+  box.innerHTML = list.map((src, i) => `<button class="chip" data-src="${esc(src)}">素材 ${i + 1}</button>`).join("") +
+    `<button class="chip" data-src="">占位图</button>`;
+  $$("#imgPresets .chip").forEach(b => b.onclick = () => {
+    quizImageManual = b.dataset.src || null;
+    if (quizCardData){ quizCardData.image = activeImage(); drawCard($("#quizCanvas"), quizCardData); }
+    $$("#imgPresets .chip").forEach(x => x.classList.toggle("on", x === b));
+    toast(quizImageManual ? "底图已替换" : "已切回占位图", "good");
+  });
+})();
+
+/* ============================================================
+   9. 初始化
+   ============================================================ */
+/* 趣味标语轮换（无梗不麦当劳） */
+(function taglineLoop(){
+  if (REDUCED) return;
+  const lines = ["今天吃什么堡？","穷鬼也想吃好堡","券不领就是亏","奶龙帮你点餐","预算锁死，快乐解锁","吃饱才有力气减肥","第二份半价，冲！"];
+  const el = $("#tagline");
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % lines.length;
+    el.classList.add("swap");
+    setTimeout(() => { el.textContent = lines[i]; el.classList.remove("swap"); }, 300);
+  }, 4200);
+})();
+
+/* 初始名片数据（绘制延迟到首次切到抽卡 Tab） */
+quizCardData = {
+  badge:"示例", eyebrow:"麦麦奶龙 · 堡格名片",
+  title:"省钱天才·巨无霸辣王·单人成军奶龙",
+  chips:["性格 · 省钱天才", "辣度 · 辣党", "食量 · 巨胃", "社交 · 独食型"],
+  info:[["堡格","巨无霸辣王·单人成军"],["推荐","麦辣鸡腿堡中套餐　实付 ¥24.50"]],
+  image:null
+};
+quizAutoImage = pictureForRoles(BOGE_ROLE["巨无霸辣王"], quizCardData.title);
+quizCardData.image = activeImage();
+</script>
+</body>
+</html>

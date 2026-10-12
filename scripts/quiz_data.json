@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "ratio": "麦当劳题 5 : 日常题 5",
+  "axes": {
+    "spicy": ["spicy", "mild"],
+    "appetite": ["big", "light"],
+    "decision": ["decisive", "hesitant"],
+    "social": ["party", "solo"]
+  },
+  "questions": [
+    {
+      "id": 1,
+      "kind": "mcd",
+      "title": "你的「本命汉堡」是哪一个？",
+      "options": [
+        { "key": "A", "text": "麦辣鸡腿堡——没辣不算吃饭", "scores": { "spicy": 2 } },
+        { "key": "B", "text": "板烧鸡腿堡——不辣才香", "scores": { "mild": 2 } },
+        { "key": "C", "text": "巨无霸——分量即正义", "scores": { "mild": 1, "big": 2 } },
+        { "key": "D", "text": "麦香鱼——我吃得不多", "scores": { "mild": 1, "light": 1 } }
+      ]
+    },
+    {
+      "id": 2,
+      "kind": "mcd",
+      "title": "一个人在麦当劳，你怎么点？",
+      "options": [
+        { "key": "A", "text": "一个汉堡搞定，够了", "scores": { "light": 2 } },
+        { "key": "B", "text": "汉堡+薯条+可乐，三件套才完整", "scores": { "big": 2, "planner": 1 } },
+        { "key": "C", "text": "随心配随便来点，看心情", "scores": { "light": 1, "hesitant": 1, "casual": 1 } },
+        { "key": "D", "text": "大套餐再加个小食，仪式感要有", "scores": { "big": 2, "ritual": 1 } }
+      ]
+    },
+    {
+      "id": 3,
+      "kind": "mcd",
+      "title": "站在点餐屏前，你通常会——",
+      "options": [
+        { "key": "A", "text": "3 秒下单，犹豫是浪费生命", "scores": { "decisive": 2, "efficient": 1 } },
+        { "key": "B", "text": "来回翻三遍菜单还是没决定", "scores": { "hesitant": 2 } },
+        { "key": "C", "text": "点老一套，稳定发挥", "scores": { "decisive": 1, "stable": 1 } },
+        { "key": "D", "text": "问问旁边的人点什么", "scores": { "hesitant": 1, "social": 1 } }
+      ]
+    },
+    {
+      "id": 4,
+      "kind": "mcd",
+      "title": "你的「麦麦时刻」更像哪种？",
+      "options": [
+        { "key": "A", "text": "一个人安静吃完，手机也不看", "scores": { "solo": 2, "stable": 1 } },
+        { "key": "B", "text": "必须拉上同事/朋友一起去", "scores": { "party": 2, "social": 1 } },
+        { "key": "C", "text": "看情况，有人叫就去", "scores": { "solo": 1 } },
+        { "key": "D", "text": "组队拼单凑满减，人多才划算", "scores": { "party": 2, "saver": 1 } }
+      ]
+    },
+    {
+      "id": 5,
+      "kind": "mcd",
+      "title": "薯条你蘸什么？",
+      "options": [
+        { "key": "A", "text": "番茄酱，经典永不过时", "scores": { "mild": 1, "stable": 1 } },
+        { "key": "B", "text": "甜辣酱/辣椒粉，越辣越好", "scores": { "spicy": 2 } },
+        { "key": "C", "text": "蘸冰淇淋，甜咸党在此", "scores": { "mild": 1, "ritual": 1 } },
+        { "key": "D", "text": "什么都不蘸，原味最香", "scores": { "casual": 1 } }
+      ]
+    },
+    {
+      "id": 6,
+      "kind": "daily",
+      "title": "早上闹钟响了，你的第一反应是——",
+      "options": [
+        { "key": "A", "text": "立刻起床，绝不复睡", "scores": { "efficient": 2, "morning": 1 } },
+        { "key": "B", "text": "五个闹钟连环轰炸才有用", "scores": { "nightowl": 2, "procrastinate": 1 } },
+        { "key": "C", "text": "醒了，但先刷半小时手机", "scores": { "nightowl": 1, "procrastinate": 2 } },
+        { "key": "D", "text": "我早就在健身房了", "scores": { "morning": 2, "efficient": 1 } }
+      ]
+    },
+    {
+      "id": 7,
+      "kind": "daily",
+      "title": "理想的周末安排是——",
+      "options": [
+        { "key": "A", "text": "睡到自然醒，然后随机出门", "scores": { "casual": 2 } },
+        { "key": "B", "text": "提前排好行程表，按计划走", "scores": { "planner": 2, "efficient": 1 } },
+        { "key": "C", "text": "约上一群人，热闹最重要", "scores": { "social": 2 } },
+        { "key": "D", "text": "一个人窝着，安静充电", "scores": { "stable": 1, "ritual": 1 } }
+      ]
+    },
+    {
+      "id": 8,
+      "kind": "daily",
+      "title": "网购时你更像——",
+      "options": [
+        { "key": "A", "text": "三个平台比价，凑满减凑到最优", "scores": { "saver": 2, "planner": 1 } },
+        { "key": "B", "text": "看到喜欢的直接下单", "scores": { "casual": 2 } },
+        { "key": "C", "text": "加购物车冷静三天再说", "scores": { "planner": 1, "procrastinate": 1 } },
+        { "key": "D", "text": "只买清单上的，多一点都不看", "scores": { "efficient": 2, "planner": 1 } }
+      ]
+    },
+    {
+      "id": 9,
+      "kind": "daily",
+      "title": "你的一天通常怎么开始？",
+      "options": [
+        { "key": "A", "text": "一杯咖啡不能少，否则无法启动", "scores": { "caffeine": 2 } },
+        { "key": "B", "text": "先过一遍今天的待办清单", "scores": { "planner": 2, "efficient": 1 } },
+        { "key": "C", "text": "全靠一股冲劲，想到哪做到哪", "scores": { "casual": 1, "stable": 1 } },
+        { "key": "D", "text": "先发会儿呆，找回灵魂", "scores": { "procrastinate": 1, "casual": 1, "nightowl": 1 } }
+      ]
+    },
+    {
+      "id": 10,
+      "kind": "daily",
+      "title": "朋友眼中的你，最像哪一句？",
+      "options": [
+        { "key": "A", "text": "靠谱到可以把事情托付给他", "scores": { "stable": 2, "toughsoft": 1 } },
+        { "key": "B", "text": "气氛组组长，走到哪热到哪", "scores": { "social": 2 } },
+        { "key": "C", "text": "神出鬼没的深夜党", "scores": { "nightowl": 2 } },
+        { "key": "D", "text": "嘴上嫌弃，但随叫随到", "scores": { "toughsoft": 2 } }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+# 凭据 —— 绝不提交
+.env
+.env.*
+*.token
+mcp.json
+.mcp.json
+
+# 运行时状态（真实调用的状态文件与 --mock 的假订单状态文件）
+scripts/.mcd_*.json
+
+# 生成物
+# 注意：demo/picture-manifest.js 故意**不**忽略——它是 Demo 的素材清单，
+# 内容是可移植的相对路径，一起提交可避免 <script src> 404。
+out/
+
+# 素材：**不忽略**。名片底图是作品的组成部分，需要一起提交。
+# 若你不想公开某张素材，单独加进这里；「奶龙」相关形象版权请自行确认（见 picture/README.md）。
+
+# 依赖 / 缓存
+node_modules/
+package-lock.json
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

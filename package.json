@@ -1,0 +1,14 @@
+{
+  "name": "mcd-nailong",
+  "version": "1.0.0",
+  "private": true,
+  "description": "麦麦奶龙 · 麦当劳中国 MCP 创意 Skill（每日自动领券 / 汉堡抽卡名片 / 穷鬼预算锁）",
+  "homepage": "https://github.com/Perry233-TianYupeng/mcd-nailong",
+  "scripts": {
+    "test": "node tests/demo-smoke.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.0"
+  },
+  "license": "MIT"
+}
